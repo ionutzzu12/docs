@@ -1,0 +1,2117 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Archbee Public API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.archbee.com",
+      "description": "Archbee API Server"
+    }
+  ],
+  "paths": {
+    "/api/public-api/sync-api-reference": {
+      "POST": {
+        "summary": "Sync Open Api document",
+        "description": "Sync Open Api document with a new or existing Open Api tree",
+        "tags": ["Open Api"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "multipart/form-data",
+            "example": "multipart/form-data"
+          },
+          {
+            "in": "formData",
+            "name": "docTreeId",
+            "type": "string",
+            "description": "OPTIONAL, main category id where open api was imported; if undefined, a new docTree is created and its id is returned",
+            "example": "21-character__string0",
+            "default": "21-character__string0"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file",
+            "format": "binary",
+            "description": "Open api file, .json or .yml or .yaml or .zip",
+            "example": "upload file",
+            "default": "@swagger.json"
+          },
+          {
+            "in": "formData",
+            "name": "type",
+            "type": "string",
+            "description": "Type of import file. Default openapi",
+            "example": "openapi",
+            "default": "openapi",
+            "enum": ["openapi", "postman"]
+          },
+          {
+            "in": "formData",
+            "name": "openApiTryIt",
+            "type": "string",
+            "description": "OPTIONAL. You can now test your API's directly in the editor or on your published docs with the new API Try It!",
+            "example": true,
+            "default": true,
+            "enum": [true, false]
+          },
+          {
+            "in": "formData",
+            "name": "openApiUseOwnBackend",
+            "type": "string",
+            "description": "OPTIONAL. When 'Try It' is enabled, send requests directly from the browser to the URL defined in the OpenAPI spec instead of proxying through Archbee. Requires CORS configured on your backend.",
+            "example": false,
+            "default": false,
+            "enum": [true, false]
+          },
+          {
+            "in": "formData",
+            "name": "showDownloadOpenApiFile",
+            "type": "string",
+            "description": "OPTIONAL. You can show/hide the download link of the imported Open API file in the Open API tree.",
+            "example": true,
+            "default": false,
+            "enum": [true, false]
+          },
+          {
+            "in": "formData",
+            "name": "shouldCreateSchemaCategory",
+            "type": "string",
+            "description": "OPTIONAL. You can create models category to display all your models.",
+            "example": true,
+            "default": false,
+            "enum": [true, false]
+          },
+          {
+            "in": "formData",
+            "name": "shouldCreateIntro",
+            "type": "string",
+            "description": "OPTIONAL. You can create an additional document to display open api intro.",
+            "example": true,
+            "default": false,
+            "enum": [true, false]
+          },
+          {
+            "in": "formData",
+            "name": "openApiLanguageExamples",
+            "type": "list",
+            "description": "OPTIONAL. Add your custom language examples. Maximum 5 programming language examples are allowed!",
+            "example": ["python", "r", "javascript"]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Import OK status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "example": "OK",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "docTreeId": {
+                      "type": "string",
+                      "example": "21-character__string0",
+                      "description": "Returned created/updated open api tree structure."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/info-api-reference": {
+      "GET": {
+        "summary": "Info Open Api document",
+        "description": "Get info of an existing Open Api tree",
+        "tags": ["Open Api"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "docTreeId",
+            "type": "string",
+            "description": "DocTree id is main category id where open api was imported.",
+            "example": "21-character__string0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "example": "OK",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "string"
+                    },
+                    "importedContent": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/doc": {
+      "get": {
+        "summary": "Get document",
+        "description": "Retrieve a document in `markdown`, `html`, `json`, or `source` format.",
+        "tags": ["Doc"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["docId"],
+                "properties": {
+                  "docId": {
+                    "type": "string",
+                    "description": "The ID of the document to be returned.",
+                    "example": "21-character__string0"
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "The format of the returned data. Default is `markdown`.",
+                    "example": "markdown",
+                    "enum": ["markdown", "html", "json", "source"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response containing the document content.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "string",
+                      "description": "The content of the document in the specified format."
+                    },
+                    "format": {
+                      "type": "string",
+                      "description": "The format of the returned document."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Update / Create document",
+        "description": "Create / Update Doc by `docId`",
+        "tags": ["Doc"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "markdown, MDX or JSON content used to update the document.",
+                    "example": "# this is a h1 title\nAnd this is a paragraph\n- list item 1\n- list item 2"
+                  },
+                  "format": {
+                    "type": "string",
+                    "description": "OPTIONAL. Specify the format of the content. Default is markdown. Use `mdx` when the content contains JSX-style Archbee components (`<hint>`, `<CtaButton />`, `<Tabs>`); directive-style components (`:::hint{type=\"info\"}`) work in both markdown and mdx.\n",
+                    "example": "markdown",
+                    "enum": ["markdown", "mdx", "json"]
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "OPTIONAL, set the name of the document."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "OPTIONAL, set the description of the document."
+                  },
+                  "previewImgURL": {
+                    "type": "string",
+                    "description": "OPTIONAL, set the preview image URL of the document."
+                  },
+                  "slug": {
+                    "type": "string",
+                    "description": "OPTIONAL, set the slug (url key) of the document."
+                  },
+                  "alias": {
+                    "type": "string",
+                    "description": "OPTIONAL, set the url alias."
+                  },
+                  "conditionalRuleId": {
+                    "type": "string",
+                    "description": "OPTIONAL, set the conditional rule id."
+                  },
+                  "sorting": {
+                    "type": "string",
+                    "description": "OPTIONAL. Specify the type of ordering for document insertion.",
+                    "example": "alphabetical",
+                    "enum": ["alphabetical", "chronological"]
+                  },
+                  "hidden": {
+                    "type": "boolean",
+                    "description": "OPTIONAL, set document as hidden or not."
+                  },
+                  "docId": {
+                    "type": "string",
+                    "description": "OPTIONAL, document id. If present and valid, the doc will be updated.",
+                    "example": "21-character__string0"
+                  },
+                  "parentDocId": {
+                    "type": "string",
+                    "description": "OPTIONAL, parent document id. If present and valid, the parent docId will be updated. If sent empty, the document will be moved to the root of the tree.\n",
+                    "example": "21-character__string0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response status.",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "docId": {
+                      "type": "string"
+                    },
+                    "newRecord": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete document",
+        "description": "Delete document by `docId`",
+        "tags": ["Doc"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["docId"],
+                "properties": {
+                  "docId": {
+                    "type": "string",
+                    "example": "21-character__string0",
+                    "description": "Document id that will be permanently deleted."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/docs/search": {
+      "post": {
+        "summary": "Search document",
+        "description": "Search Archbee documents in docSpace. Can perform one of the 3 types of search:\n1. **ai-chat** to return ai generative answer accompanied by source docs;\n2. **ai-retrieval** to return just similar docs with the query;\n3. **words** to perform normal search aka. \"word-based\"; use empty query to return all docs\n4. **single-doc** to return document info by id\n",
+        "tags": ["Doc"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["query"],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Filter text, question or document title"
+                  },
+                  "searchOnlyTitle": {
+                    "type": "boolean",
+                    "description": "OPTIONAL. Search only by title"
+                  },
+                  "persistSearch": {
+                    "type": "boolean",
+                    "description": "OPTIONAL. Wether to keep a SearchSession in our database and return its id."
+                  },
+                  "searchSessionId": {
+                    "type": "string",
+                    "description": "OPTIONAL. id for the SearchSession object to update. More useful for AI chat."
+                  },
+                  "docId": {
+                    "type": "string",
+                    "description": "OPTIONAL. Return only one document with this id, if there is one",
+                    "example": "21-character__string0"
+                  },
+                  "dataTextFormat": {
+                    "type": "string",
+                    "enum": ["markdown", "html"],
+                    "description": "OPTIONAL. Return documents with dataText in this format"
+                  },
+                  "parentDocId": {
+                    "type": "string",
+                    "description": "OPTIONAL. Return only child documents of the doc with this id, if there are any. Can be \"null\" for retrieving the root docs.",
+                    "example": "21-character__string0"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["words", "ai-chat", "ai-retrieval"],
+                    "description": "OPTIONAL. which type of search to use; default is word-based"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Response Data",
+                  "properties": {
+                    "searchSessionId": {
+                      "type": "string",
+                      "description": "Search session id, can be used as input for next search calls."
+                    },
+                    "docs": {
+                      "type": "array",
+                      "description": "Array of Doc responses",
+                      "items": {
+                        "$ref": "#/components/schemas/DocResponse"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/import-content": {
+      "POST": {
+        "summary": "Import Content",
+        "description": "Create new Doc from imported markdown file. In case of zip file, create a new docTree and keeps archived tree structure.",
+        "tags": ["Doc"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "multipart/form-data",
+            "example": "multipart/form-data"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file",
+            "format": "binary",
+            "description": "Markdown file (.md) or archive (.zip) containing multiple markdown files.",
+            "example": "upload file",
+            "default": "@markdowns.zip"
+          },
+          {
+            "in": "formData",
+            "name": "type",
+            "type": "string",
+            "description": "Type of import file. Only markdown supported for now on this route.",
+            "example": "markdown",
+            "default": "markdown",
+            "enum": ["markdown"]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Import OK status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "example": "OK",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "docId": {
+                      "type": "string",
+                      "example": "21-character__string0",
+                      "description": "Created Doc id (first doc in case of archive tree)."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space/create": {
+      "post": {
+        "summary": "Create Space",
+        "description": "Create a new space with desired fields, return its id. New space will inherit apiKey.",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["environment"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "name of space"
+                  },
+                  "isLlmEnabled": {
+                    "type": "boolean",
+                    "description": "wether AI will be enabled"
+                  },
+                  "isReviewSystemEnabled": {
+                    "type": "boolean",
+                    "description": "wether review system will be enaled"
+                  },
+                  "isBranchingSystemEnabled": {
+                    "type": "boolean",
+                    "description": "wether branching will be enabled"
+                  },
+                  "docSpaceGroupId": {
+                    "type": "string",
+                    "description": "id of space group to include this space in"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "DocSpace id",
+                  "properties": {
+                    "newDocSpaceId": {
+                      "type": "string",
+                      "description": "doc space id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/access-control/request": {
+      "post": {
+        "summary": "Request Magic Link Access",
+        "description": "Submit a reader's email as a pending request to be added to the space's magic-link whitelist. The request does NOT grant access on its own — an admin must approve it. The space must be configured for Magic Link (Magic Link enabled, the portal gating content, and the team's plan allowing it); otherwise the request is refused with 400. There is one request per (email, space). A repeat request for the same email is idempotent per status: a Pending request returns the existing row unchanged; an Accepted request whose email is still whitelisted also returns it unchanged; but an Accepted request whose access was later revoked, or a previously Rejected request, is put back into the Pending queue and re-notifies the admins — so a rejected or revoked reader can always re-apply.\n",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email address requesting access",
+                    "example": "reader@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "access control request id"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "request status",
+                      "enum": ["Pending", "Accepted", "Rejected"]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space/update": {
+      "post": {
+        "summary": "Update Space",
+        "description": "Update space fields.",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["environment"],
+                "properties": {
+                  "publicAccessControlPart": {
+                    "type": "object",
+                    "description": "Configuration for public access control and authentication",
+                    "properties": {
+                      "publicProtectionType": {
+                        "type": "string",
+                        "description": "Type of protection for the space",
+                        "enum": [
+                          "None",
+                          "Password",
+                          "Guest accounts",
+                          "Private Accounts",
+                          "Private Link",
+                          "Magic Link",
+                          "JWT",
+                          "SAML"
+                        ],
+                        "example": "Password"
+                      },
+                      "publicPassword": {
+                        "type": "string",
+                        "description": "Password required when publicProtectionType is 'Password'",
+                        "example": "mySecurePassword123"
+                      },
+                      "publicGuestAccounts": {
+                        "type": "array",
+                        "description": "Guest accounts required when publicProtectionType is 'Guest accounts'",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "example": "guest@example.com"
+                            },
+                            "password": {
+                              "type": "string",
+                              "example": "guestPassword123"
+                            }
+                          }
+                        }
+                      },
+                      "publicMagicLinkAccounts": {
+                        "type": "array",
+                        "description": "Magic link accounts required when publicProtectionType is 'Magic Link'",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "example": "user@example.com"
+                            }
+                          }
+                        }
+                      },
+                      "publicPrivateAccounts": {
+                        "type": "array",
+                        "description": "Private accounts required when publicProtectionType is 'Private Accounts'",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "example": "private@example.com"
+                            }
+                          }
+                        }
+                      },
+                      "privateLinkTokens": {
+                        "type": "array",
+                        "description": "Private link tokens required when publicProtectionType is 'Private Link'",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string",
+                              "example": "API Access Token"
+                            },
+                            "env": {
+                              "type": "string",
+                              "example": "production"
+                            },
+                            "token": {
+                              "type": "string",
+                              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                            }
+                          }
+                        }
+                      },
+                      "jwtValidationType": {
+                        "type": "string",
+                        "description": "JWT validation type required when publicProtectionType is 'JWT'",
+                        "enum": ["JWT-Secret", "JWT-KeySet"],
+                        "example": "JWT-Secret"
+                      },
+                      "jwtKeyUrl": {
+                        "type": "string",
+                        "description": "JWT key URL required when jwtValidationType is 'JWT-KeySet'",
+                        "example": "https://example.com/.well-known/jwks.json"
+                      },
+                      "jwtSecret": {
+                        "type": "string",
+                        "description": "JWT secret required when jwtValidationType is 'JWT-Secret'",
+                        "example": "myJwtSecret123"
+                      },
+                      "conditionalRuleId": {
+                        "type": "string",
+                        "description": "Conditional rule ID for advanced access control",
+                        "example": "21-character__string0"
+                      },
+                      "jwtRedirectURL": {
+                        "type": "string",
+                        "description": "JWT redirect URL for authentication flow",
+                        "example": "https://example.com/auth/callback"
+                      },
+                      "samlMetadata": {
+                        "type": "string",
+                        "description": "SAML metadata required when publicProtectionType is 'SAML'",
+                        "example": "<EntityDescriptor>...</EntityDescriptor>"
+                      }
+                    }
+                  },
+                  "hostnamePart": {
+                    "type": "object",
+                    "description": "Custom hostname configuration for the space",
+                    "properties": {
+                      "hostname": {
+                        "type": "string",
+                        "description": "Custom hostname for the space",
+                        "example": "docs.example.com"
+                      },
+                      "hostnamePath": {
+                        "type": "string",
+                        "description": "Path component for the hostname",
+                        "example": "/api-docs"
+                      }
+                    }
+                  },
+                  "spaceLinks": {
+                    "type": "array",
+                    "description": "Links to other spaces. List should start with current space.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "example": "Related Documentation"
+                        },
+                        "docSpaceId": {
+                          "type": "string",
+                          "example": "21-character__string0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "DocSpace id",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "doc space id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space/publish": {
+      "post": {
+        "summary": "Publish Space",
+        "description": "Publish Archbee documents from given `docSpaceId`",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["environment"],
+                "properties": {
+                  "environment": {
+                    "type": "string",
+                    "description": "can be `PREVIEW` or `PUBLISHED`"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "DocSpace id",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "doc space id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space/clone": {
+      "post": {
+        "summary": "Clone Space",
+        "description": "Clone Archbee space from given `docSpaceId`",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "targetSpaceGroupId": {
+                    "type": "string",
+                    "description": "Space group id where space will be cloned.",
+                    "example": "21-character__string0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "DocSpace id",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "doc space id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space/delete": {
+      "delete": {
+        "summary": "Delete Space",
+        "description": "Delete Archbee space with given `docSpaceId`",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "targetSpaceId": {
+                    "type": "string",
+                    "description": "Space id to delete.",
+                    "example": "21-character__string0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "description": "DocSpace id",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "doc space id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space-group/create": {
+      "post": {
+        "summary": "Create Space Group",
+        "description": "Create a new space group with desired fields, return the space group.",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "name of space group"
+                  },
+                  "isLlmEnabled": {
+                    "type": "boolean",
+                    "description": "whether AI will be enabled"
+                  },
+                  "isReviewSystemEnabled": {
+                    "type": "boolean",
+                    "description": "whether review system will be enabled"
+                  },
+                  "isBranchingSystemEnabled": {
+                    "type": "boolean",
+                    "description": "whether branching will be enabled"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/space-group/delete": {
+      "delete": {
+        "summary": "Delete Space Group",
+        "description": "Delete Archbee space group with given `spaceGroupId`.",
+        "tags": ["DocSpace"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spaceGroupId": {
+                    "type": "string",
+                    "description": "Space group id to delete.",
+                    "example": "21-character__string0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "enum": ["OK"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/team/export": {
+      "get": {
+        "summary": "Organization Export",
+        "description": "Export assets, spaces with documents, team and user data from Archbee given `teamId`. Use `--output <export_file_path>`",
+        "tags": ["Organization"],
+        "produces": ["application/zip"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["teamId"],
+                "properties": {
+                  "teamId": {
+                    "type": "string",
+                    "description": "Team id for which the export is computed.",
+                    "example": "21-character__string0"
+                  },
+                  "exportThisSpaceOnly": {
+                    "type": "boolean",
+                    "description": "OPTIONAL, use this if you want to export data only from the space with docSpaceId.",
+                    "example": true
+                  },
+                  "exportAsLink": {
+                    "type": "boolean",
+                    "description": "OPTIONAL, use this if you want to get a link to the zip archive.",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful export",
+            "content": {
+              "application/zip": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/team/display-rules": {
+      "get": {
+        "summary": "Organization Display Rules",
+        "description": "Export a list of display rules.",
+        "tags": ["Organization"],
+        "produces": ["application/zip"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["teamId"],
+                "properties": {
+                  "teamId": {
+                    "type": "string",
+                    "description": "Team id for which display rules are computed.",
+                    "example": "21-character__string0"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful export todo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "displayRules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique identifier for the display rule",
+                            "example": "wRJ1O4ChAK_lioQj39bHk"
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Human-readable title for the display rule",
+                            "example": "are gmail2"
+                          },
+                          "combinator": {
+                            "type": "string",
+                            "enum": ["AND", "OR"],
+                            "description": "Logical operator to combine multiple rules",
+                            "example": "AND"
+                          },
+                          "rules": {
+                            "type": "array",
+                            "description": "Array of individual rules that define the conditions",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "field": {
+                                  "type": "string",
+                                  "description": "The field to evaluate the condition against",
+                                  "example": "email"
+                                },
+                                "operator": {
+                                  "type": "string",
+                                  "description": "The comparison operator",
+                                  "example": "CONTAINS"
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "description": "The value to compare against",
+                                  "example": "gmail.com"
+                                }
+                              },
+                              "required": ["field", "operator", "value"]
+                            }
+                          }
+                        },
+                        "required": ["id", "title", "combinator", "rules"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/upload/file": {
+      "POST": {
+        "summary": "Upload single file",
+        "description": "Upload a single file to the File Manager",
+        "tags": ["Upload"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "multipart/form-data",
+            "example": "multipart/form-data"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file",
+            "format": "binary",
+            "description": "Open api file, .json or .yml or .yaml or .zip",
+            "example": "upload file",
+            "default": "@swagger.json"
+          },
+          {
+            "in": "formData",
+            "name": "isPublic",
+            "type": "string",
+            "description": "OPTIONAL. Whether the uploaded file is public or not regarding AWS link.",
+            "example": true,
+            "default": true,
+            "enum": [true, false]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload OK status",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Response Status",
+                  "example": "OK",
+                  "enum": ["OK"]
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "description": "AWS link to the uploaded file"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/file-manager/files": {
+      "get": {
+        "summary": "List File Manager files",
+        "description": "List files and folders in the File Manager. Omitting parentId lists every entry across all folders (use searchQuery/pagination to find one); pass a folder id to list that folder's direct children. Filter with itemType (directory, image, or file).",
+        "tags": ["File Manager"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "parentId",
+            "type": "string",
+            "description": "OPTIONAL. Folder id to list the direct children of. Omit to list all entries across every folder."
+          },
+          {
+            "in": "query",
+            "name": "itemType",
+            "type": "string",
+            "enum": ["directory", "image", "file"],
+            "description": "OPTIONAL. Filter by entry type."
+          },
+          {
+            "in": "query",
+            "name": "searchQuery",
+            "type": "string",
+            "description": "OPTIONAL. Case-insensitive filename filter."
+          },
+          {
+            "in": "query",
+            "name": "pageIndex",
+            "type": "integer",
+            "description": "OPTIONAL. Zero-based page index (default 0)."
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "type": "integer",
+            "description": "OPTIONAL. Page size (1-200)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List OK status"
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/file-manager/file": {
+      "delete": {
+        "summary": "Delete a File Manager file",
+        "description": "Permanently delete a File Manager file or folder (folders delete their contents recursively).",
+        "tags": ["File Manager"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fileId"],
+                "properties": {
+                  "fileId": {
+                    "type": "string",
+                    "description": "Id of the file or folder to delete."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delete OK status"
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/file-manager/move": {
+      "post": {
+        "summary": "Move a File Manager file",
+        "description": "Move a File Manager file or folder into another folder. Pass a null newParentId to move it to the root.",
+        "tags": ["File Manager"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fileId", "newParentId"],
+                "properties": {
+                  "fileId": {
+                    "type": "string",
+                    "description": "Id of the file or folder to move."
+                  },
+                  "newParentId": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Destination folder id, or null for the root."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Move OK status"
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/file-manager/replace": {
+      "post": {
+        "summary": "Overwrite a File Manager file",
+        "description": "Replace the contents of an existing File Manager file in place. The file keeps its id and public URL, so existing document embeds update automatically.",
+        "tags": ["File Manager"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "default": "multipart/form-data",
+            "example": "multipart/form-data"
+          },
+          {
+            "in": "formData",
+            "name": "fileId",
+            "required": true,
+            "type": "string",
+            "description": "Id of the existing file to overwrite."
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "required": true,
+            "type": "file",
+            "format": "binary",
+            "description": "New file contents."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Overwrite OK status"
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/suggest-change/merge": {
+      "post": {
+        "summary": "Merge suggestion into main document",
+        "description": "Merge a suggestion document into the base document. The suggestion document must have a docId starting with 'SUGGEST-'.",
+        "tags": ["Suggest Change"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["docId"],
+                "properties": {
+                  "docId": {
+                    "type": "string",
+                    "description": "The ID of the suggestion document to merge. Must start with 'SUGGEST-'.",
+                    "example": "SUGGEST-21character_string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Suggestion successfully merged",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/public-api/suggest-change/discard": {
+      "post": {
+        "summary": "Discard suggestion document",
+        "description": "Discard and delete a suggestion document without merging it into the base document. The suggestion document must have a docId starting with 'SUGGEST-'.",
+        "tags": ["Suggest Change"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "example": "application/json"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["docId"],
+                "properties": {
+                  "docId": {
+                    "type": "string",
+                    "description": "The ID of the suggestion document to discard. Must start with 'SUGGEST-'.",
+                    "example": "SUGGEST-21character_string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Suggestion successfully discarded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "OK"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response400"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Requires the `Authorization` header in the form `Authorization: Bearer {base64(docSpaceId~apiKey)}` Where the token is base64 encoding of docSpaceId, tilde, and apiKey.\n"
+      }
+    },
+    "schemas": {
+      "DocResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Archbee id, used for private access"
+          },
+          "name": {
+            "type": "string",
+            "description": "name of document"
+          },
+          "urlKey": {
+            "type": "string",
+            "description": "url of public document, used for public access (if published)"
+          },
+          "urlAlias": {
+            "type": "string",
+            "description": "In case you are migrating from another platform and you’d like to get a redirecting url to your current url, you can use this url path."
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "indicates if document is hidden"
+          },
+          "privacy": {
+            "type": "string",
+            "description": "describes how to access the document via public url (if published)",
+            "enum": ["private", "shared with team", "public-via-link", "public"]
+          },
+          "highlight": {
+            "type": "object",
+            "description": "text from document, similar with query (word-based search only)"
+          }
+        }
+      },
+      "Response400": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Response Status",
+            "example": "Not OK",
+            "enum": ["OK", "Not OK"]
+          },
+          "messages": {
+            "type": "array",
+            "description": "Array of messages",
+            "example": ["Some error message"],
+            "items": {
+              "type": "string",
+              "example": "Some error message"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
