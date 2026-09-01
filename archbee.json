@@ -10,6 +10,12 @@
         "children": []
       },
       {
+        "categoryName": "api",
+        "isCategory": false,
+        "path": "swagger.json",
+        "children": []
+      },
+      {
         "categoryName": "Cursor.mdx",
         "isCategory": false,
         "path": "cursor.mdx",
