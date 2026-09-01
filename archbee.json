@@ -11,7 +11,7 @@
       },
       {
         "categoryName": "api",
-        "isCategory": false,
+        "isCategory": true,
         "path": "swagger.json",
         "children": []
       },
