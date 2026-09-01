@@ -26,6 +26,12 @@
         "isCategory": false,
         "path": "windsurf.mdx",
         "children": []
+      },
+      {
+        "categoryName": "api",
+        "isCategory": true,
+        "path": "swagger.mdx",
+        "children": []
       }
     ],
     "assets": "assets/"
