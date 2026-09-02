@@ -27,7 +27,7 @@
         }
       },
       {
-        "categoryName": "api5",
+        "categoryName": "api6",
         "isCategory": true,
         "path": "openapi - 3.1.0 - cloudzero.yaml",
         "children": []
