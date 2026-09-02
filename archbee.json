@@ -27,6 +27,23 @@
         }
       },
       {
+        "categoryName": "api3",
+        "isCategory": true,
+        "path": "swagger.json",
+        "children": [],
+        "docTreeOptions": {
+          "openApiTryIt": true,
+          "openApiUseOwnBackend": true,
+          "showDownloadOpenApiFile": true,
+          "shouldCreateIntro": true
+        }
+      },
+      {
+        "categoryName": "api4",
+        "isCategory": true,
+        "path": "openapi - 3.1.0 - cloudzero.yaml",
+      },
+      {
         "categoryName": "Cursor.mdx",
         "isCategory": false,
         "path": "cursor.mdx",
