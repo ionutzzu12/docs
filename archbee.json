@@ -18,7 +18,13 @@
         "categoryName": "api3",
         "isCategory": true,
         "path": "swagger.json",
-        "children": []
+        "children": [],
+        "docTreeOptions": {
+          "openApiTryIt": true,
+          "openApiUseOwnBackend": true,
+          "showDownloadOpenApiFile": true,
+          "shouldCreateIntro": true
+        }
       },
       {
         "categoryName": "Cursor.mdx",
