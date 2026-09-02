@@ -30,7 +30,12 @@
         "categoryName": "api8",
         "isCategory": true,
         "path": "cloudzero.yaml",
-        "children": []
+        "children": [],
+        "docTreeOptions": {
+          "openApiTryIt": true,
+          "openApiUseOwnBackend": true,
+          "shouldCreateIntro": true
+        }
       },
       {
         "categoryName": "Cursor.mdx",
@@ -42,6 +47,12 @@
         "categoryName": "Windsurf.mdx",
         "isCategory": false,
         "path": "windsurf.mdx",
+        "children": []
+      },
+      {
+        "categoryName": "Swagger Petstore yaml - OpenAPI 3.0",
+        "isCategory": true,
+        "path": "swagger-petstore-yaml-openapi-30.yml",
         "children": []
       }
     ],
