@@ -1,0 +1,889 @@
+---
+openapi: '3.1.0'
+info:
+  version: '2.0.0'
+  title: 'CloudZero API V2 Resources'
+  description: 'CloudZero V2 API'
+  contact:
+    name: CloudZero Support
+    url: https://www.cloudzero.com/contact
+    email: support@cloudzero.com
+  license:
+    name: BSD 3
+    identifier: BSD-3
+servers:
+  - url: 'https://dev-api.cloudzero.com'
+tags:
+  - name: budgets
+    description: Budget Resources
+  - name: comments
+    description: Comment Resources
+  - name: insights
+    description: Insight Resources
+paths:
+  ###################
+  # Insights Paths
+  ###################
+  /v2/insights:
+    get:
+      operationId: getInsights
+      description: 'Get a list of Insights'
+      tags: ['insights']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/cursor'
+        - name: 'sort_key'
+          in: 'query'
+          required: false
+          schema:
+            $ref: '#/components/schemas/insight_sort_keys'
+        - $ref: '#/components/parameters/sort_order'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  pagination:
+                    $ref: '#/components/schemas/pagination'
+                  sorting:
+                    $ref: '#/components/schemas/insight_sorting'
+                  filters:
+                    $ref: '#/components/schemas/insight_filters'
+                  insights:
+                    $ref: '#/components/schemas/insights'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    post:
+      operationId: createInsight
+      description: 'Create a new Insight'
+      tags: ['insights']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/insight_new'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  insight:
+                    $ref: '#/components/schemas/insight'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+  /v2/insights/{insight_id}:
+    get:
+      operationId: getOneInsight
+      description: 'Get a single Insight'
+      tags: ['insights']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/insight_id'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  insight:
+                    $ref: '#/components/schemas/insight'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    delete:
+      operationId: deleteOneInsight
+      description: 'Delete a single Insight'
+      tags: ['insights']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/insight_id'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            applicaton/json:
+              schema:
+                type: 'object'
+                properties:
+                  insight:
+                    $ref: '#/components/schemas/with_id'
+                  comments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/with_id'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    patch:
+      operationId: updateOneInsight
+      description: 'Update a single Insight'
+      tags: ['insights']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/insight_id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/insight_new'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  insight:
+                    $ref: '#/components/schemas/insight'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+  /v2/insights/{insight_id}/comments:
+    get:
+      operationId: getCommentsForOneInsight
+      description: 'Get a list of Comments for an Insight'
+      tags: ['insights', 'comments']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/insight_id'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  insight:
+                    $ref: '#/components/schemas/with_id'
+                  comments:
+                    $ref: '#/components/schemas/comments'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    post:
+      operationId: createCommentForOneInsight
+      description: 'Create a new Comment for an Insight'
+      tags: ['insights', 'comments']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/insight_id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment_new'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  comment:
+                    $ref: '#/components/schemas/comment'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+
+  /v2/insights/{insight_id}/comments/{comment_id}:
+    patch:
+      operationId: updateOneCommentForOneInsight
+      description: 'Update one Comment for an Insight'
+      tags: ['insights', 'comments']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/insight_id'
+        - $ref: '#/components/parameters/comment_id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment_new'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  comment:
+                    $ref: '#/components/schemas/comment'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+
+  ###################
+  # Budgets Paths
+  ###################
+  /v2/budgets:
+    get:
+      operationId: getBudgets
+      description: 'Get a list of Budgets'
+      tags: ['budgets']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/cursor'
+        - name: 'sort_key'
+          in: 'query'
+          required: false
+          schema:
+            $ref: '#/components/schemas/budget_sort_keys'
+        - $ref: '#/components/parameters/sort_order'
+        - $ref: '#/components/parameters/budget_get_all_expand'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  pagination:
+                    $ref: '#/components/schemas/pagination'
+                  sorting:
+                    $ref: '#/components/schemas/budget_sorting'
+                  # filters:
+                  #   $ref: "#/components/schemas/insight_filters"
+                  budgets:
+                    $ref: '#/components/schemas/budget_maybe_current_expanded'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    post:
+      operationId: createBudget
+      description: 'Create a new Budget'
+      tags: ['budgets']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/budget_new'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  budget:
+                    $ref: '#/components/schemas/budget'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+  /v2/budgets/{budget_id}:
+    get:
+      operationId: getOneBudget
+      description: 'Get a single Budget'
+      tags: ['budgets']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/budget_id'
+        - $ref: '#/components/parameters/budget_get_one_expand'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  budget:
+                    $ref: '#/components/schemas/budget_maybe_fully_expanded'
+                required: ['budget']
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    patch:
+      operationId: updateOneBudget
+      description: 'Update a single Budget'
+      tags: ['budgets']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/budget_id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/budget_new'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                properties:
+                  budget:
+                    $ref: '#/components/schemas/budget'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+    delete:
+      operationId: deleteOneBudget
+      description: 'Delete a single Budget'
+      tags: ['budgets']
+      parameters:
+        - $ref: '#/components/parameters/cloudzero_idempotency_key'
+        - $ref: '#/components/parameters/cloudzero_test_key'
+        - $ref: '#/components/parameters/budget_id'
+      responses:
+        '200':
+          description: 'Successful Operation'
+          content:
+            applicaton/json:
+              schema:
+                type: 'object'
+                properties:
+                  budget:
+                    $ref: '#/components/schemas/with_id'
+        '400':
+          $ref: '#/components/responses/badRequestError'
+        '403':
+          $ref: '#/components/responses/forbiddenError'
+      security:
+        - APIKeyAuth: []
+components:
+  parameters:
+    ###################
+    # Common Advanced Headers
+    ###################
+    cloudzero_test_key:
+      description: |
+        If passed, the operation executes in the namespace specified by this key.
+        Resource mutations in the namespace last for 1 hour.
+      name: 'cloudzero-test-key'
+      in: 'header'
+      required: false
+      schema:
+        type: string
+    cloudzero_idempotency_key:
+      description: |
+        If passed, any subsequent operation with the same value for this header will return the exact same result.
+        This is true for all responses, i.e. successes and errors.
+      name: 'cloudzero-idempotency-key'
+      in: 'header'
+      required: false
+      schema:
+        type: string
+    ###################
+    # Common Sorting Parameters
+    ###################
+    limit:
+      description: 'Number of items to return per page'
+      name: 'limit'
+      in: 'query'
+      required: false
+      schema:
+        type: number
+        format: int32
+    cursor:
+      description: 'Pass only this parameter to page forward or back; NOTE: remember to urlencode it!'
+      name: 'cursor'
+      in: 'query'
+      required: false
+      schema:
+        type: string
+    sort_order:
+      description: 'ASC or DESC sort order'
+      name: 'sort_order'
+      in: 'query'
+      required: false
+      schema:
+        $ref: '#/components/schemas/sort_order'
+    ###################
+    # Common Insight Parameters
+    ###################
+    insight_id:
+      description: Unique Insight identifier
+      name: 'insight_id'
+      in: 'path'
+      required: true
+      schema:
+        type: string
+    comment_id:
+      description: Unique Comment identifier
+      name: 'comment_id'
+      in: 'path'
+      required: true
+      schema:
+        type: string
+    ###################
+    # Common Budget Parameters
+    ###################
+    budget_id:
+      description: Unique budget identifier
+      name: 'budget_id'
+      in: 'path'
+      required: true
+      schema:
+        type: string
+    budget_get_all_expand:
+      description: |
+        If passed, query will expand the properties specified.
+        This is a multi-value query parameter, pass it more than once to specify multiple values, e.g.
+          &expand=current&expand=history
+      name: 'expand'
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/budget_get_all_expand'
+    budget_get_one_expand:
+      description: |
+        If passed, query will expand the properties specified.
+        This is a multi-value query parameter, pass it more than once to specify multiple values, e.g.
+          &expand=current&expand=history
+      name: 'expand'
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/budget_get_one_expand'
+  responses:
+    ###################
+    # Error Responses
+    ###################
+    forbiddenError:
+      description: 'Forbidden'
+      content:
+        application/json:
+          schema:
+            type: 'object'
+            properties:
+              message:
+                type: string
+            required: ['message']
+    badRequestError:
+      description: 'Bad Request Error'
+      content:
+        application/json:
+          schema:
+            type: 'object'
+            properties:
+              error:
+                $ref: '#/components/schemas/error'
+  schemas:
+    ###################
+    # Common Data Types
+    ###################
+    error:
+      type: object
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+    cost_type:
+      description: |
+        Type of charges included in the cost calculation, where
+          real_cost: filters your bill to only display charges directly related to consumption
+      type: string
+      enum: ['real_cost']
+    currency:
+      description: 'String representation of a dollar amount'
+      type: string
+      pattern: '^\d+(\.\d{1,})?$'
+    currency_in:
+      description: 'String or float representation of a dollar amount'
+      oneOf:
+        - $ref: '#/components/schemas/currency'
+        - type: number
+          format: float
+    epoch:
+      description: 'String representation of an epoch (UTC timestamp)'
+      type: string
+      pattern: '^\d+(\.\d{1,})?$'
+    granularity:
+      description: 'Supported periods, e.g. "monthly"'
+      type: string
+      enum: ['monthly']
+    ###################
+    # Common Objects
+    ###################
+    with_id:
+      type: object
+      properties:
+        id:
+          type: string
+      required: ['id']
+    with_created:
+      type: object
+      properties:
+        created:
+          description: 'UTC timestamp for the creation of this entity'
+          $ref: '#/components/schemas/epoch'
+      required: ['created']
+    with_last_updated:
+      type: object
+      properties:
+        last_updated:
+          description: 'UTC timestamp for the last update of this entity'
+          $ref: '#/components/schemas/epoch'
+      required: ['last_updated']
+    ###################
+    # Pagination
+    ###################
+    pagination:
+      description: 'Supports programmatic pagination'
+      type: object
+      properties:
+        page_count:
+          type: integer
+          format: int32
+        item_count:
+          type: integer
+          format: int32
+        total_count:
+          type: integer
+          format: int32
+        cursor:
+          type: object
+          properties:
+            next_cursor:
+              type: string
+              format: nullable
+            previous_cursor:
+              type: string
+              format: nullable
+            has_next:
+              type: boolean
+            has_previous:
+              type: boolean
+    ###################
+    # Sorting
+    ###################
+    sort_order:
+      type: string
+      enum: ['asc', 'desc']
+    sort_orders:
+      type: array
+      items:
+        $ref: '#/components/schemas/sort_order'
+      example: ['asc', 'desc']
+    ###################
+    # Insights
+    ###################
+    insight_new:
+      type: object
+      properties:
+        effort:
+          type: string
+          enum: ['not_set', 'low', 'medium', 'high']
+        cost_impact:
+          $ref: '#/components/schemas/currency_in'
+        status:
+          type: string
+          enum: ['new', 'in_progress', 'on_hold', 'addressed', 'ignored']
+        category:
+          type: string
+        link:
+          type: string
+        description:
+          type: string
+        title:
+          type: string
+    insight:
+      allOf:
+        - $ref: '#/components/schemas/insight_new'
+        - $ref: '#/components/schemas/with_id'
+        - $ref: '#/components/schemas/with_created'
+        - $ref: '#/components/schemas/with_last_updated'
+        - type: object
+          properties:
+            cost_impact:
+              $ref: '#/components/schemas/currency'
+    insights:
+      type: array
+      items:
+        $ref: '#/components/schemas/insight'
+    insight_sort_keys:
+      description: Sortable Insight properties
+      type: string
+      enum: ['cost_impact', 'effort', 'last_updated', 'status']
+    insight_sorting:
+      type: object
+      properties:
+        available:
+          type: object
+          properties:
+            sort_keys:
+              type: array
+              items:
+                $ref: '#/components/schemas/insight_sort_keys'
+              example: ['cost_impact', 'effort', 'last_updated', 'status']
+            sort_orders:
+              $ref: '#/components/schemas/sort_orders'
+        current:
+          type: array
+          items:
+            type: object
+            properties:
+              sort_key:
+                $ref: '#/components/schemas/insight_sort_keys'
+              sort_order:
+                $ref: '#/components/schemas/sort_order'
+    insight_filters:
+      type: object
+      properties:
+        hide_resolved:
+          type: boolean
+    comment:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/comment_new'
+        - $ref: '#/components/schemas/with_id'
+        - $ref: '#/components/schemas/with_created'
+        - $ref: '#/components/schemas/with_last_updated'
+        - type: object
+          properties:
+            author:
+              type: string
+            insight:
+              $ref: '#/components/schemas/with_id'
+          required: ['author', 'insight']
+    comment_new:
+      type: object
+      properties:
+        message:
+          type: string
+      required: ['message']
+    comments:
+      type: array
+      items:
+        $ref: '#/components/schemas/comment'
+    ###################
+    # Budgets
+    ###################
+    budget:
+      allOf:
+        - $ref: '#/components/schemas/budget_new'
+        - $ref: '#/components/schemas/with_id'
+        - $ref: '#/components/schemas/with_created'
+        - $ref: '#/components/schemas/with_last_updated'
+        - type: object
+          properties:
+            cost_type:
+              $ref: '#/components/schemas/cost_type'
+            granularity:
+              $ref: '#/components/schemas/granularity'
+          required: ['cost_type', 'granularity']
+    budget_current_expanded:
+      allOf:
+        - $ref: '#/components/schemas/budget'
+        - type: object
+          properties:
+            current:
+              $ref: '#/components/schemas/budget_current'
+          required: ['current']
+    budget_fully_expanded:
+      allOf:
+        - $ref: '#/components/schemas/budget_current_expanded'
+        - type: object
+          properties:
+            burnup:
+              $ref: '#/components/schemas/budget_burnup'
+          required: ['burnup']
+        - type: object
+          properties:
+            history:
+              $ref: '#/components/schemas/budget_history'
+          required: ['history']
+    budget_maybe_current_expanded:
+      anyOf:
+        - $ref: '#/components/schemas/budget'
+        - $ref: '#/components/schemas/budget_current_expanded'
+    budget_maybe_fully_expanded:
+      anyOf:
+        - $ref: '#/components/schemas/budget'
+        - $ref: '#/components/schemas/budget_fully_expanded'
+    budget_alerts:
+      description: |
+        Mapping of 1-100 to Y/N, where
+          1-100 is the percentage of the budget at which to send an alert
+          Y/N is whether or not to send the alert
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/budget_alerts_value'
+      example:
+        alerts:
+          '80': 'N'
+          '100': 'Y'
+    budget_alerts_value:
+      type: string
+      enum: ['Y', 'N']
+    budget_new:
+      type: object
+      properties:
+        name:
+          description: 'Budget name, must be unique within a View'
+          type: string
+        planned_limits:
+          $ref: '#/components/schemas/budget_planned_limits'
+        view:
+          description: 'View associated with this Budget'
+          $ref: '#/components/schemas/with_id'
+        alerts:
+          $ref: '#/components/schemas/budget_alerts'
+      required: ['name', 'planned_limits', 'view']
+    budget_get_all_expand:
+      type: array
+      items:
+        type: string
+        enum: ['current']
+    budget_get_one_expand:
+      type: array
+      items:
+        type: string
+        enum: ['current', 'history', 'burnup']
+    budget_planned_actual:
+      type: object
+      properties:
+        actual:
+          type: string
+        planned:
+          type: string
+      required: ['actual', 'planned']
+    budget_burnup:
+      type: object
+      properties:
+        daily:
+          $ref: '#/components/schemas/budget_date_planned_actual'
+      required: ['daily']
+    budget_current:
+      $ref: '#/components/schemas/budget_planned_actual'
+    budget_history:
+      type: object
+      properties:
+        monthly:
+          $ref: '#/components/schemas/budget_date_planned_actual'
+        quarterly:
+          $ref: '#/components/schemas/budget_date_planned_actual'
+      required: ['monthly', 'quarterly']
+    budget_date_planned_actual:
+      type: object
+      patternProperties:
+        '^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])(T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?)?$':
+          $ref": '#/components/schemas/budget_planned_actual'
+    budget_sorting:
+      type: object
+      properties:
+        available:
+          type: object
+          properties:
+            sort_keys:
+              type: array
+              items:
+                $ref: '#/components/schemas/budget_sort_keys'
+              example: ['last_updated', 'name']
+            sort_orders:
+              $ref: '#/components/schemas/sort_orders'
+        current:
+          type: array
+          items:
+            type: object
+            properties:
+              sort_key:
+                $ref: '#/components/schemas/budget_sort_keys'
+              sort_order:
+                $ref: '#/components/schemas/sort_order'
+    budget_sort_keys:
+      description: Sortable Budget properties
+      type: string
+      enum: ['last_updated', 'name']
+    budget_planned_limits:
+      description: |
+        Mapping of date to amount, where
+          date is an ISO Formatted string
+          amount is a Mapping of the literal string "amount" to a dollar amount
+      type: object
+      properties:
+        monthly:
+          description: |
+            Monthly planned limit as a mapping of month date to amount, where
+              month date is an ISO Formatted Date [Time] String that will be coerced to the first of the month
+              amount is a Mapping of the literal string "amount" to a dollar amount
+          type: object
+          additionalProperties:
+            description: Amount for planned limit
+            type: object
+            properties:
+              amount:
+                $ref: '#/components/schemas/currency'
+            required: ['amount']
+      required: ['monthly']
+      example:
+        monthly:
+          '2022-02-01T00:00:00+00:00':
+            amount: '1000.00'
+  securitySchemes:
+    APIKeyAuth:
+      type: 'apiKey'
+      name: 'Authorization'
+      in: 'header'
