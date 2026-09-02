@@ -2,6 +2,9 @@
   "$schema": "https://api.archbee.com/git-config-schema",
   "docsPath": "ai-tools/",
   "structure": {
+    "docTreeOptions": {
+      "shouldCreateIntro": true
+    },
     "docsTree": [
       {
         "categoryName": "Claude-code.mdx",
