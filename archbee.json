@@ -3,7 +3,8 @@
   "docsPath": "ai-tools/",
   "structure": {
     "docTreeOptions": {
-      "shouldCreateIntro": true
+      "shouldCreateIntro": true,
+      "openApiTryIt": true
     },
     "docsTree": [
       {
