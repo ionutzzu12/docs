@@ -30,6 +30,7 @@
         "categoryName": "api4",
         "isCategory": true,
         "path": "openapi - 3.1.0 - cloudzero.yaml",
+        "children": []
       },
       {
         "categoryName": "Cursor.mdx",
