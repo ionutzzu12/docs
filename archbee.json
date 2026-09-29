@@ -53,6 +53,15 @@
         "categoryName": "Swagger Petstore yaml - OpenAPI 3.0",
         "isCategory": true,
         "path": "swagger-petstore-yaml-openapi-30.yml",
+        "children": [],
+        "docTreeOptions": {
+          "openApiTryIt": true,
+          "openApiUseOwnBackend": true,
+          "shouldCreateIntro": true
+        }
+      },
+      {
+        "path": "GCY4oAuxiR9gOK3KzLVFS.mdx",
         "children": []
       }
     ],
