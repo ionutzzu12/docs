@@ -44,6 +44,10 @@
         "children": []
       },
       {
+        "path": "new-doc.mdx",
+        "children": []
+      },
+      {
         "categoryName": "Windsurf.mdx",
         "isCategory": false,
         "path": "windsurf.mdx",
@@ -62,6 +66,10 @@
       },
       {
         "path": "GCY4oAuxiR9gOK3KzLVFS.mdx",
+        "children": []
+      },
+      {
+        "path": "untitled-2.mdx",
         "children": []
       }
     ],
