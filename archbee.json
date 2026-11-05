@@ -101,6 +101,17 @@
       {
         "path": "ref1.mdx",
         "children": []
+      },
+      {
+        "categoryName": "Shadow Docs",
+        "isCategory": true,
+        "children": [
+          {
+            "path": "shadow-docs/shadow-doc1.mdx",
+            "children": []
+          }
+        ],
+        "isShadowDocs": true
       }
     ],
     "assets": "assets/"
