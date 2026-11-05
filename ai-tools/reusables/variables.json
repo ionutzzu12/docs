@@ -1,0 +1,30 @@
+{
+  "pen": {
+    "contentVariableId": "TTqv2UVU01GNwsI3b4_w2",
+    "name": "pen",
+    "content": "pen",
+    "type": "glossary",
+    "description": "Pen number",
+    "scope": "global",
+    "spaceTargetMap": {
+      "es": "corral",
+      "ptbr": "Lote"
+    }
+  },
+  "today": {
+    "contentVariableId": "Yx2dNf0CSsFs85CZ9h0ca",
+    "name": "today",
+    "content": "today",
+    "type": "glossary",
+    "description": "Today's date",
+    "scope": "global"
+  },
+  "protocol": {
+    "contentVariableId": "isiIah7vy7vWEHBZ6RE7z",
+    "name": "protocol",
+    "content": "protocol",
+    "type": "glossary",
+    "description": "A dairy protocols include a series of treatments or tasks that follow a prescribed order and schedule. Protocols may be defined for reproduction purposes, to treat an illness, or for routine vaccinations.",
+    "scope": "global"
+  }
+}

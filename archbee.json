@@ -4,9 +4,9 @@
   "snippetsSpace": true,
   "structure": {
     "docTreeOptions": {
-      "shouldCreateIntro": true,
       "openApiTryIt": true,
-      "openApiUseOwnBackend": true
+      "openApiUseOwnBackend": true,
+      "shouldCreateIntro": true
     },
     "docsTree": [
       {
@@ -64,8 +64,46 @@
       {
         "path": "GCY4oAuxiR9gOK3KzLVFS.mdx",
         "children": []
+      },
+      {
+        "path": "s5.mdx",
+        "children": [
+          {
+            "path": "s4.mdx",
+            "children": []
+          }
+        ]
+      },
+      {
+        "path": "dada.mdx",
+        "children": []
+      },
+      {
+        "path": "s2.mdx",
+        "children": []
+      },
+      {
+        "path": "s1.mdx",
+        "children": []
+      },
+      {
+        "path": "dcm-knownissues.mdx",
+        "children": []
+      },
+      {
+        "path": "ref2.mdx",
+        "children": []
+      },
+      {
+        "path": "ref2-22.mdx",
+        "children": []
+      },
+      {
+        "path": "ref1.mdx",
+        "children": []
       }
     ],
     "assets": "assets/"
-  }
+  },
+  "autoMerge": false
 }
